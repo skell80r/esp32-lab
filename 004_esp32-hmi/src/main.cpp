@@ -133,6 +133,7 @@ void loop()
   tft.print("Temp: ");
   tft.print(bme.temperature, 1);
   tft.println(" C");
+  
 
   delay(2000);
 }
