@@ -133,7 +133,12 @@ void loop()
   tft.print("Temp: ");
   tft.print(bme.temperature, 1);
   tft.println(" C");
-  
+
+  tft.setCursor(20, 40);
+  tft.print("Pressure = ");
+  tft.print(bme.pressure / 100.0);
+  tft.println(" hPa");
+
 
   delay(2000);
 }

@@ -8,21 +8,18 @@ More info:
 https://docs.platformio.org/en/latest/core/quickstart.html
 
 
-## Awesome
-I like markdown
-
-Remember this code it is awesome
-```python
-print("hellworld")
-for i in range(10):
-    print('hi')
-```
-
+## TODO
+GOAL: thermostat with touchscreen
+- Touch proof of concept:
+    - show temperature and pressure
+    - show 'set temp'.  If you touch top of screen, set temp goes up by 1 degree.  If touch bottom, goes down 1 degree.
 
 
 ## Parts
 https://www.amazon.com/your-orders/orders?page=1&ref_=ppx_yo2ov_dt_b_pagination_1_2
 
+## ESP32
+![](https://docs.platformio.org/en/latest/_images/espressif32_debug_pinout.jpg)
 
 ### BME680 Thermometer
 https://learn.adafruit.com/adafruit-bme680-humidity-temperature-barometic-pressure-voc-gas/bsec-air-quality-library
