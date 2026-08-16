@@ -26,20 +26,20 @@ public:
     cfg.pin_sclk = 18; // denky32 default VSPI SCK
     cfg.pin_mosi = 23; // denky32 default VSPI MOSI (SDI)
     cfg.pin_miso = 19; // denky32 default VSPI MISO (SDO)
-    cfg.pin_dc = -1;   // TODO: set to LCD_RS wiring
+    cfg.pin_dc = 13;   // TODO: set to LCD_RS wiring
     _bus_instance.config(cfg);
     _panel_instance.setBus(&_bus_instance);
 
     auto pcfg = _panel_instance.config();
-    pcfg.pin_cs = -1;  // TODO: set to LCD_CS wiring
-    pcfg.pin_rst = -1; // TODO: set to LCD_RST wiring
-    pcfg.pin_busy = -1;
+    pcfg.pin_cs = 27;  // TODO: set to LCD_CS wiring
+    pcfg.pin_rst = 14; // TODO: set to LCD_RST wiring
+    pcfg.pin_busy = -1;  // only necessary for e-ink displays, per claude
     pcfg.panel_width = 320;
     pcfg.panel_height = 480;
     _panel_instance.config(pcfg);
 
     auto bl_cfg = _light_instance.config();
-    bl_cfg.pin_bl = -1; // TODO: set to LED backlight wiring
+    bl_cfg.pin_bl = 25; // TODO: set to LED backlight wiring
     bl_cfg.freq = 44100;
     bl_cfg.pwm_channel = 7;
     _light_instance.config(bl_cfg);
@@ -62,7 +62,10 @@ LCD (ST7796U, SPI):
   19 -> SDO (MISO)
   LCD_CS / LCD_RS / LCD_RST / LED -> TODO, fill in tft config above once wired
 
-pio run -t upload and pio device monitor
+```
+  pio run -t upload
+  pio device monitor
+```
 */
 void setup()
 {
