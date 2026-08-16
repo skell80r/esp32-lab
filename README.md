@@ -20,6 +20,8 @@ for i in range(10):
 
 
 
+## Parts
+https://www.amazon.com/your-orders/orders?page=1&ref_=ppx_yo2ov_dt_b_pagination_1_2
 
 ## log
 
