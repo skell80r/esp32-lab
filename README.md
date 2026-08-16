@@ -23,6 +23,11 @@ for i in range(10):
 ## Parts
 https://www.amazon.com/your-orders/orders?page=1&ref_=ppx_yo2ov_dt_b_pagination_1_2
 
+
+### BME680 Thermometer
+https://learn.adafruit.com/adafruit-bme680-humidity-temperature-barometic-pressure-voc-gas/bsec-air-quality-library
+
+
 ## log
 
 Installed pio
