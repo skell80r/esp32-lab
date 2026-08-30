@@ -65,3 +65,7 @@ enum class ForecastButton
 
 void showForecastPage(const ForecastResult &forecast);
 ForecastButton hitTestForecastPage(int touchX, int touchY);
+
+// Draws the embedded screensaver image full-screen. Any tap dismisses it -
+// handled entirely in main.cpp's idle timer, no hit-testing needed here.
+void showScreensaver();

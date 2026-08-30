@@ -50,6 +50,7 @@ static const unsigned long NEWS_INTERVAL_MS = 30UL * 60 * 1000;
 static const unsigned long OUTSIDE_REDRAW_INTERVAL_MS = 30UL * 1000;
 // No seconds shown, so minute-level freshness is plenty - avoids a redraw every second.
 static const unsigned long CLOCK_INTERVAL_MS = 5000;
+static const unsigned long SCREENSAVER_IDLE_MS = 15UL * 1000; // TESTING: 15s instead of 5 min - revert after verifying
 
 static unsigned long lastIndoorAt = 0;
 // Seeded so "now - lastXAt >= INTERVAL" is already true on the first loop()
@@ -61,6 +62,7 @@ static unsigned long lastNewsAt = 0 - NEWS_INTERVAL_MS;
 static unsigned long lastOutsideRedrawAt = 0 - OUTSIDE_REDRAW_INTERVAL_MS;
 static unsigned long lastClockAt = 0 - CLOCK_INTERVAL_MS;
 static unsigned long weatherFetchedAt = 0;
+static unsigned long lastActivityAt = 0;
 
 static WeatherResult lastWeather{};
 static AqiResult lastAqi{};
@@ -96,7 +98,8 @@ enum class Page
 {
   Dashboard,
   Thermostat,
-  Forecast
+  Forecast,
+  Screensaver
 };
 static Page currentPage = Page::Dashboard;
 
@@ -246,6 +249,8 @@ void setup()
   showOutside(lastWeather.ok, lastWeather.tempF, lastWeather.condition, 0, lastAqi);
   showAlert(currentAlarmDisplayState(), lastAlerts.headline);
   showNews(lastNews.ok, lastNews.headlines, lastNews.count);
+
+  lastActivityAt = millis();
 }
 
 void loop()
@@ -258,41 +263,61 @@ void loop()
     // between the chip's periodic refreshes even while still pressed.
     static bool wasPressed = false;
     bool pressed = isTouching();
+    if (pressed)
+    {
+      lastActivityAt = now; // any contact counts as activity, including a held touch
+    }
     if (pressed && !wasPressed)
     {
-      // Require two consecutive reads to agree (within 40px) before trusting
-      // the coordinate - filters out one-off garbled reads without needing
-      // any hardware interrupt signal.
-      const int AGREEMENT_TOLERANCE_PX = 40;
-      int tx, ty;
-      bool gotPoint = false;
-      if (readTouchScreen(tx, ty))
+      if (currentPage == Page::Screensaver)
       {
-        for (int attempt = 0; attempt < 5 && !gotPoint; attempt++)
+        // Any tap just wakes it - don't try to interpret the tap as a UI
+        // action on whatever happens to be underneath.
+        currentPage = Page::Dashboard;
+        redrawDashboard();
+      }
+      else
+      {
+        // Require two consecutive reads to agree (within 40px) before trusting
+        // the coordinate - filters out one-off garbled reads without needing
+        // any hardware interrupt signal.
+        const int AGREEMENT_TOLERANCE_PX = 40;
+        int tx, ty;
+        bool gotPoint = false;
+        if (readTouchScreen(tx, ty))
         {
-          delay(10);
-          int tx2, ty2;
-          if (!readTouchScreen(tx2, ty2))
+          for (int attempt = 0; attempt < 5 && !gotPoint; attempt++)
           {
-            continue; // no read this cycle - keep comparing against last known point
-          }
-          if (abs(tx2 - tx) <= AGREEMENT_TOLERANCE_PX && abs(ty2 - ty) <= AGREEMENT_TOLERANCE_PX)
-          {
-            gotPoint = true;
-          }
-          else
-          {
-            tx = tx2;
-            ty = ty2;
+            delay(10);
+            int tx2, ty2;
+            if (!readTouchScreen(tx2, ty2))
+            {
+              continue; // no read this cycle - keep comparing against last known point
+            }
+            if (abs(tx2 - tx) <= AGREEMENT_TOLERANCE_PX && abs(ty2 - ty) <= AGREEMENT_TOLERANCE_PX)
+            {
+              gotPoint = true;
+            }
+            else
+            {
+              tx = tx2;
+              ty = ty2;
+            }
           }
         }
-      }
-      if (gotPoint)
-      {
-        handleTouchTap(tx, ty);
+        if (gotPoint)
+        {
+          handleTouchTap(tx, ty);
+        }
       }
     }
     wasPressed = pressed;
+  }
+
+  if (currentPage != Page::Screensaver && now - lastActivityAt >= SCREENSAVER_IDLE_MS)
+  {
+    currentPage = Page::Screensaver;
+    showScreensaver();
   }
 
   if (now - lastIndoorAt >= INDOOR_INTERVAL_MS)

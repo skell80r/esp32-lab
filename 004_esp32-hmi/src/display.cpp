@@ -4,7 +4,10 @@
 // TFT_*, TFT_INVERSION_ON, SPI_FREQUENCY) rather than here - see TFT_eSPI's
 // own docs for what each of those controls.
 #include <TFT_eSPI.h>
+#include <TJpg_Decoder.h>
 #include <string.h>
+
+#include "tiger_jpg.h"
 
 static TFT_eSPI tft = TFT_eSPI();
 
@@ -732,4 +735,27 @@ ForecastButton hitTestForecastPage(int touchX, int touchY)
     return ForecastButton::Back;
   }
   return ForecastButton::None;
+}
+
+// --- Screensaver ---------------------------------------------------------
+
+static bool screensaverJpegBlockReady(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap)
+{
+  tft.pushImage(x, y, w, h, bitmap);
+  return true;
+}
+
+void showScreensaver()
+{
+  static bool decoderInitialized = false;
+  if (!decoderInitialized)
+  {
+    TJpgDec.setJpgScale(1);
+    TJpgDec.setSwapBytes(true); // TFT_eSPI expects big-endian RGB565
+    TJpgDec.setCallback(screensaverJpegBlockReady);
+    decoderInitialized = true;
+  }
+
+  tft.fillScreen(TFT_BLACK);
+  TJpgDec.drawJpg(0, 0, TIGER_JPG, TIGER_JPG_LEN);
 }
