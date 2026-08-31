@@ -1,0 +1,6 @@
+{
+    // Let the PlatformIO extension manage its own Core + Python in
+    // ~/.platformio/penv. No system pip / uv install needed.
+    "platformio-ide.useBuiltinPIOCore": true,
+    "platformio-ide.useBuiltinPython": true
+}
