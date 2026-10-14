@@ -1,8 +1,8 @@
 ## Getting Started
 - In VSCode, ensure the PlatformIO extension is installed
-- Open the project you wish to work with, e.g. `esp32_hellworld`
+- Open the project you wish to work with, e.g. `002_esp32_hellworld`
 - Write code
-- Use the platform io extension or pio command to build and upload to the board
+- Use the PlatformIO extension or pio command to build and upload to the board
 
 More info:
 https://docs.platformio.org/en/latest/core/quickstart.html
